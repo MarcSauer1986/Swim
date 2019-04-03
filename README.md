@@ -16,8 +16,8 @@ Somit können Technikschwächen aufgedeckt werden und in einem weiteren Schritt 
 werden.
 
 ## Projektfahrplan
-1.	get sensor data (deadline: 01./02.04.)
-2.	generate data (deadline: 03.04.)
+1.	get sensor data (deadline: 02.04.)
+2.	data aquisition (deadline: 03.04.)
 3.	data preprocessing (deadline: 05.04.)
 4.	run first model (deadline: 05.04.)
 5.	improve…
