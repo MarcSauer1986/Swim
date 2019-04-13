@@ -4,7 +4,6 @@ import numpy as np
 import glob
 from scipy.signal import find_peaks
 
-
 testrun = 'Run_0_1 Kopie'
 pre = Preprocessing(testrun)
 
@@ -17,7 +16,6 @@ raw_magn = pre.load_data('magn-175130000657-20190405T085617Z.csv', name='raw_mag
 column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
 raw_data = pd.concat([raw_accel, raw_gyro, raw_magn], axis=1, sort=False)
 raw_data.columns = column_names
-
 
 # Create data frame for every single stroke and save as csv
 def single_stroke(raw_data, testrun, save_data=False):
