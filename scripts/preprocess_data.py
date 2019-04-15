@@ -4,18 +4,6 @@ import numpy as np
 import glob
 from scipy.signal import find_peaks
 
-testrun = 'Run_0_1 Kopie'
-pre = Preprocessing(testrun)
-
-# Load data
-raw_accel = pre.load_data('accel-175130000657-20190405T085617Z.csv', name='raw_accel', header=None)
-raw_gyro = pre.load_data('gyro-175130000657-20190405T085618Z.csv', name='raw_gyro', header=None)
-raw_magn = pre.load_data('magn-175130000657-20190405T085617Z.csv', name='raw_magn', header=None)
-
-# Create data frame with all sensor information
-column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
-raw_data = pd.concat([raw_accel, raw_gyro, raw_magn], axis=1, sort=False)
-raw_data.columns = column_names
 
 # Create data frame for every single stroke and save as csv
 def single_stroke(raw_data, testrun, save_data=False):
@@ -33,9 +21,9 @@ def single_stroke(raw_data, testrun, save_data=False):
     stroke_cut, _ = (find_peaks(raw_data['Magn_Z'] * (-1), distance=best_distance))
     stroke_length = np.diff(stroke_cut).tolist()
     if np.var(stroke_length) < 10:
-        print('Nice cut (low variance): ' + str(np.var(stroke_length)))
+        print('Stroke detection: nice cut (low variance): {:.2f}'.format(np.var(stroke_length)))
     else:
-        print('Not that good cut. Variance: ' + str(np.var(stroke_length)))
+        print('Stroke detection: not that good cut. Variance: ' + str(np.var(stroke_length)))
         print('Lowest amount of data samples: ' + str(min(stroke_length)))
         print('Highest amount of data samples: ' + str(max(stroke_length)))
 
@@ -59,12 +47,7 @@ def single_stroke(raw_data, testrun, save_data=False):
             k += 1
         print('Saved single strokes to CSV')
 
-single_stroke(raw_data, testrun, save_data=False)
-
-condition_0 = '/Users/marcsauer/PycharmProjects/Swim/data/Run_0_* Kopie/stroke_*.csv'
-condition_1 = '/Users/marcsauer/PycharmProjects/Swim/data/Run_1_* Kopie/stroke_*.csv'
-
-
+# Feature engineering
 def feature_dataframe(condition):
     '''Creating features from single stroke and merge into new data frame'''
     Magn_X_mean = []
@@ -228,12 +211,32 @@ def feature_dataframe(condition):
         feature_dataframe['condition'] = 1
     return feature_dataframe
 
-# Create clean data
-feature_df_0 = feature_dataframe(condition_0)
-feature_df_1 = feature_dataframe(condition_1)
 
-frames = [feature_df_0, feature_df_1]
-feature_df_clean = pd.concat(frames)
+if __name__ == '__main__':
+    testrun = 'Run_0_2_Phelps'
 
-# Save clean_data to CSV
-pd.DataFrame(feature_df_clean).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv', index=False)
+    # Load data
+    raw_accel = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/accel-175130000657-20190415T141241Z.csv', header=None)
+    raw_gyro = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/gyro-175130000657-20190415T141242Z.csv', header=None)
+    raw_magn = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/magn-175130000657-20190415T141310Z.csv', header=None)
+
+    # Create data frame with all sensor information
+    column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
+    raw_data = pd.concat([raw_accel, raw_gyro, raw_magn], axis=1, sort=False)
+    raw_data.columns = column_names
+
+    # Create data frame for every single stroke and save as csv
+    single_stroke(raw_data, testrun, save_data=False)
+
+    condition_0 = '/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/stroke_*.csv'
+    #condition_1 = '/Users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
+
+    # Feature engineering
+    feature_df_0 = feature_dataframe(condition_0)
+    #feature_df_1 = feature_dataframe(condition_1)
+    #frames = [feature_df_0, feature_df_1]
+    #feature_df_clean = pd.concat(frames)
+
+    # Save clean_data to CSV
+    pd.DataFrame(feature_df_clean).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data_phelps2.csv', index=False)
+    print('Saved clean data to CSV.')

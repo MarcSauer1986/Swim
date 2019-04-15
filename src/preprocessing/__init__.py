@@ -1,3 +1,3 @@
 from .preprocessing import Preprocessing
 
-__all__ = ['preprocessing']
+__all__ = ['Preprocessing']
