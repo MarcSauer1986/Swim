@@ -5,6 +5,11 @@ from scipy.signal import find_peaks
 import os
 import dask.dataframe as dd
 
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
+import pickle
+
 # Create data frame for every single stroke and save as csv
 def single_stroke(raw_data, user_input_2, save_data=False):
 
@@ -210,6 +215,8 @@ def feature_dataframe(condition):
         feature_dataframe['condition'] = 0
     elif condition == condition_1:
         feature_dataframe['condition'] = 1
+    elif condition == condition_2:
+        print('Daten für Vorhersage bereit!')
     else:
         print('Daten wurden nicht gelabelt. Kein Modell-Training möglich. Nur Vorhersage!')
     return feature_dataframe
@@ -218,31 +225,26 @@ if __name__ == '__main__':
 
     # Zwei Varianten: Train_model oder Make_prediction
 
-    print("Was wollen Sie tun?\n0: Modell trainieren\n1: Technik vorhersagen")
+    print('Was wollen Sie tun?\n0: Modell trainieren\n1: Technik vorhersagen')
     user_input = input()
 
     # Prepare date for Train_model:
     if user_input == '0':
 
         # Load data
-        user_input_2 = input("Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) von Bedingung 0 beinhaltet: ")
+        user_input_2 = input("Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) der Bedingung 'deep catch' beinhaltet: ")
         assert os.path.exists(user_input_2), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_2)
         raw_accel_0 = dd.read_csv(str(user_input_2)+'/accel-*.csv', header=None).compute()
         raw_gyro_0 = dd.read_csv(str(user_input_2)+'/gyro-*.csv', header=None).compute()
         raw_magn_0 = dd.read_csv(str(user_input_2)+'/magn-*.csv', header=None).compute()
-        print("Sehr gut, es wurden alle Sensordaten von Bedingung 0 gefunden!")
+        print("Sehr gut, es wurden alle Sensordaten der Bedingung 'deep catch' gefunden!")
 
-        user_input_3 = input("Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) von Bedingung 1 beinhaltet: ")
+        user_input_3 = input("Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) der Bedingung 'high elbow catch' beinhaltet: ")
         assert os.path.exists(user_input_3), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_3)
         raw_accel_1 = dd.read_csv(str(user_input_3) + '/accel-*.csv', header=None).compute()
         raw_gyro_1 = dd.read_csv(str(user_input_3) + '/gyro-*.csv', header=None).compute()
         raw_magn_1 = dd.read_csv(str(user_input_3) + '/magn-*.csv', header=None).compute()
-        print("Hooray, wir haben alle deine Sensordaten gefunden!")
-
-        # Load data
-        #raw_accel = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Test7/accel-175130000657-20190405T085617Z.csv'.format(directory), header=None)
-        #raw_gyro = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Test7/gyro-175130000657-20190405T085618Z.csv'.format(directory), header=None)
-        #raw_magn = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Test7/magn-175130000657-20190405T085617Z.csv'.format(directory), header=None)
+        print('Hooray, wir haben alle deine Sensordaten gefunden!')
 
         # Create data frame with all sensor information
         column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
@@ -253,7 +255,7 @@ if __name__ == '__main__':
         raw_data_1.columns = column_names
 
         # Create data frame for every single stroke and save as csv
-        user_input_4 = input("Sollen die Schwimmzüge einzeln abgespeichert werden?\n0 Nein\n1 Ja\n")
+        user_input_4 = input('Sollen die Schwimmzüge einzeln abgespeichert werden?\n0 Nein\n1 Ja\n')
         if user_input_4 == '0':
             single_stroke(raw_data_0, user_input_2, save_data=False)
             single_stroke(raw_data_1, user_input_3, save_data=False)
@@ -261,7 +263,7 @@ if __name__ == '__main__':
             single_stroke(raw_data_0, user_input_2, save_data=True)
             single_stroke(raw_data_1, user_input_3, save_data=True)
         else:
-            print("Sie müssen entweder 0 (Nein) oder 1 (Ja) eingeben.")
+            print('Sie müssen entweder 0 (Nein) oder 1 (Ja) eingeben.')
 
         condition_0 = str(user_input_2)+'/stroke_*.csv'
         condition_1 = str(user_input_3)+'/stroke_*.csv'
@@ -275,10 +277,97 @@ if __name__ == '__main__':
         # Save clean_data to CSV
         pd.DataFrame(feature_df_clean).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv', index=False)
         print("'clean_data' als CSV abgespeichert.")
+        print('Datenvorbereitung abgeschlossen!')
 
-    # Prepare date for Make_prediction:
+        # Train model
+        print("Soll das Modell nun trainiert werden?\n0: Nein\n1: Ja")
+        user_input_5 = input()
+
+        if user_input_5 == '1':
+            print('Das Modell wird nun trainiert!')
+
+            # Read clean data
+            clean_data = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv')
+
+            # Prepare data
+            X = clean_data.drop(['condition'], axis=1)
+            y = clean_data['condition']
+
+            # Split data in train, validate and test set
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+            X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.25, random_state=42)
+            X_train = pd.DataFrame(X_train)
+            X_val = pd.DataFrame(X_val)
+
+            # Run training
+            logreg = LogisticRegression(solver='liblinear', multi_class='ovr')
+            model_logreg = logreg.fit(X_train, y_train)
+            print('Training abgeschlossen!')
+
+            # Evaluate training
+            score_logreg = model_logreg.score(X_val, y_val)
+            print('Die Genauigkeit des Modells liegt bei: {:.2f}%'.format(score_logreg * 100))
+
+            # Save model
+            print('Soll das Modell gespeichert werden?\n0: Nein\n1: Ja')
+            user_input_6 = input()
+
+            if user_input_6 == '1':
+                print('Das Modell wird nun gespeichert!')
+
+                # save the model to disk
+                filename = 'trained_model.sav'
+                pickle.dump(model_logreg, open(filename, 'wb'))
+                print('Speichern des Modells abgeschlossen!')
+
+            elif user_input_6 == '0':
+                print('Soll ein weiteres Modell trainiert werden?')
+                # ToDo:
+                pass
+
+
+        elif user_input_5 == '0':
+            pass
+
+    # Prepare data for making prediction:
     elif user_input == '1':
-        pass
+
+        # Load data
+        user_input_5 = input('Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) beinhaltet: ')
+        assert os.path.exists(user_input_5), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_5)
+        raw_accel_2 = dd.read_csv(str(user_input_5)+'/accel-*.csv', header=None).compute()
+        raw_gyro_2 = dd.read_csv(str(user_input_5)+'/gyro-*.csv', header=None).compute()
+        raw_magn_2 = dd.read_csv(str(user_input_5)+'/magn-*.csv', header=None).compute()
+        print('Sehr gut, es wurden alle Sensordaten gefunden!')
+
+        # Create data frame with all sensor information
+        column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
+        raw_data_2 = pd.concat([raw_accel_2, raw_gyro_2, raw_magn_2], axis=1, sort=False)
+        raw_data_2.columns = column_names
+
+        # Create data frame for every single stroke and save as csv
+        clean_data = single_stroke(raw_data_2, user_input_5, save_data=True)
+
+        # ToDo: das ist nicht so schön, aber funktioniert. Noch anpassen.
+        condition_0 = 'irgendwas'
+        condition_1 = 'irgendwas'
+        condition_2 = str(user_input_5) + '/stroke_*.csv'
+
+        # Feature engineering
+        clean_data_2 = feature_dataframe(condition_2)
+        pd.DataFrame(clean_data_2)
+
+        # Prepare data
+        X = clean_data_2
+
+        # Make prediction
+        # Load the model from disk
+        filename = 'trained_model.sav'
+        loaded_model = pickle.load(open(filename, 'rb'))
+        y_pred = loaded_model.predict(X)
+        print(y_pred)
+
+
     else:
-        print("Falsche Eingabe. Wählen Sie entweder 'Modell trainieren' oder 'Technik vorhersagen'.")
+        print("Falsche Eingabe. Wählen Sie entweder 0 (Modell trainieren) oder 1 (Technik vorhersagen).")
         user_input = input()
