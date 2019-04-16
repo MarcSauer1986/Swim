@@ -1,12 +1,13 @@
-from preprocessing import Preprocessing
 import pandas as pd
 import numpy as np
 import glob
 from scipy.signal import find_peaks
-
+import os
+import dask.dataframe as dd
 
 # Create data frame for every single stroke and save as csv
-def single_stroke(raw_data, testrun, save_data=False):
+def single_stroke(raw_data, user_input_2, save_data=False):
+
     # Find best distance for stroke_cut
     var = []
     for i in range(1, 50):
@@ -21,11 +22,11 @@ def single_stroke(raw_data, testrun, save_data=False):
     stroke_cut, _ = (find_peaks(raw_data['Magn_Z'] * (-1), distance=best_distance))
     stroke_length = np.diff(stroke_cut).tolist()
     if np.var(stroke_length) < 10:
-        print('Stroke detection: nice cut (low variance): {:.2f}'.format(np.var(stroke_length)))
+        print('Schwimmzugerkennung: sehr gut (geringe Varianz): {:.2f}'.format(np.var(stroke_length)))
     else:
-        print('Stroke detection: not that good cut. Variance: ' + str(np.var(stroke_length)))
-        print('Lowest amount of data samples: ' + str(min(stroke_length)))
-        print('Highest amount of data samples: ' + str(max(stroke_length)))
+        print('Schwimmzugerkennung: okay. Varianz: ' + str(np.var(stroke_length)))
+        print('Geringste Anzahl von Datenpunkte pro Zug: ' + str(min(stroke_length)))
+        print('Höchste Anzahl von Datenpunkte pro Zug: ' + str(max(stroke_length)))
 
     # Drop outliers and create list of data frames
     criterion_outlier_lower_limit = (np.mean(stroke_length) - 2 * np.std(stroke_length))
@@ -43,9 +44,9 @@ def single_stroke(raw_data, testrun, save_data=False):
         k = 1
         for i in range(0, len(list_of_dfs_without_outliers)):
             pd.DataFrame(list_of_dfs_without_outliers[i]).to_csv(
-                '/Users/marcsauer/PycharmProjects/Swim/data/{}/stroke_{}.csv'.format(testrun, k), index=False)
+                '{}/stroke_{}.csv'.format(user_input_2, k), index=False)
             k += 1
-        print('Saved single strokes to CSV')
+        print('Einzelne Züge als CSV abgespeichert.')
 
 # Feature engineering
 def feature_dataframe(condition):
@@ -209,34 +210,75 @@ def feature_dataframe(condition):
         feature_dataframe['condition'] = 0
     elif condition == condition_1:
         feature_dataframe['condition'] = 1
+    else:
+        print('Daten wurden nicht gelabelt. Kein Modell-Training möglich. Nur Vorhersage!')
     return feature_dataframe
 
-
 if __name__ == '__main__':
-    testrun = 'Run_0_2_Phelps'
 
-    # Load data
-    raw_accel = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/accel-175130000657-20190415T141241Z.csv', header=None)
-    raw_gyro = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/gyro-175130000657-20190415T141242Z.csv', header=None)
-    raw_magn = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/magn-175130000657-20190415T141310Z.csv', header=None)
+    # Zwei Varianten: Train_model oder Make_prediction
 
-    # Create data frame with all sensor information
-    column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
-    raw_data = pd.concat([raw_accel, raw_gyro, raw_magn], axis=1, sort=False)
-    raw_data.columns = column_names
+    print("Was wollen Sie tun?\n0: Modell trainieren\n1: Technik vorhersagen")
+    user_input = input()
 
-    # Create data frame for every single stroke and save as csv
-    single_stroke(raw_data, testrun, save_data=False)
+    # Prepare date for Train_model:
+    if user_input == '0':
 
-    condition_0 = '/Users/marcsauer/PycharmProjects/Swim/data/Run_0_2_Phelps/stroke_*.csv'
-    #condition_1 = '/Users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
+        # Load data
+        user_input_2 = input("Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) von Bedingung 0 beinhaltet: ")
+        assert os.path.exists(user_input_2), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_2)
+        raw_accel_0 = dd.read_csv(str(user_input_2)+'/accel-*.csv', header=None).compute()
+        raw_gyro_0 = dd.read_csv(str(user_input_2)+'/gyro-*.csv', header=None).compute()
+        raw_magn_0 = dd.read_csv(str(user_input_2)+'/magn-*.csv', header=None).compute()
+        print("Sehr gut, es wurden alle Sensordaten von Bedingung 0 gefunden!")
 
-    # Feature engineering
-    feature_df_0 = feature_dataframe(condition_0)
-    #feature_df_1 = feature_dataframe(condition_1)
-    #frames = [feature_df_0, feature_df_1]
-    #feature_df_clean = pd.concat(frames)
+        user_input_3 = input("Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) von Bedingung 1 beinhaltet: ")
+        assert os.path.exists(user_input_3), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_3)
+        raw_accel_1 = dd.read_csv(str(user_input_3) + '/accel-*.csv', header=None).compute()
+        raw_gyro_1 = dd.read_csv(str(user_input_3) + '/gyro-*.csv', header=None).compute()
+        raw_magn_1 = dd.read_csv(str(user_input_3) + '/magn-*.csv', header=None).compute()
+        print("Hooray, wir haben alle deine Sensordaten gefunden!")
 
-    # Save clean_data to CSV
-    pd.DataFrame(feature_df_clean).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data_phelps2.csv', index=False)
-    print('Saved clean data to CSV.')
+        # Load data
+        #raw_accel = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Test7/accel-175130000657-20190405T085617Z.csv'.format(directory), header=None)
+        #raw_gyro = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Test7/gyro-175130000657-20190405T085618Z.csv'.format(directory), header=None)
+        #raw_magn = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/Test7/magn-175130000657-20190405T085617Z.csv'.format(directory), header=None)
+
+        # Create data frame with all sensor information
+        column_names = ['Accel_X', 'Accel_Y', 'Accel_Z', 'Gyro_X', 'Gyro_Y', 'Gyro_Z', 'Magn_X', 'Magn_Y', 'Magn_Z']
+        raw_data_0 = pd.concat([raw_accel_0, raw_gyro_0, raw_magn_0], axis=1, sort=False)
+        raw_data_0.columns = column_names
+
+        raw_data_1 = pd.concat([raw_accel_1, raw_gyro_1, raw_magn_1], axis=1, sort=False)
+        raw_data_1.columns = column_names
+
+        # Create data frame for every single stroke and save as csv
+        user_input_4 = input("Sollen die Schwimmzüge einzeln abgespeichert werden?\n0 Nein\n1 Ja\n")
+        if user_input_4 == '0':
+            single_stroke(raw_data_0, user_input_2, save_data=False)
+            single_stroke(raw_data_1, user_input_3, save_data=False)
+        elif user_input_4 == '1':
+            single_stroke(raw_data_0, user_input_2, save_data=True)
+            single_stroke(raw_data_1, user_input_3, save_data=True)
+        else:
+            print("Sie müssen entweder 0 (Nein) oder 1 (Ja) eingeben.")
+
+        condition_0 = str(user_input_2)+'/stroke_*.csv'
+        condition_1 = str(user_input_3)+'/stroke_*.csv'
+
+        # Feature engineering
+        feature_df_0 = feature_dataframe(condition_0)
+        feature_df_1 = feature_dataframe(condition_1)
+        frames = [feature_df_0, feature_df_1]
+        feature_df_clean = pd.concat(frames)
+
+        # Save clean_data to CSV
+        pd.DataFrame(feature_df_clean).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv', index=False)
+        print("'clean_data' als CSV abgespeichert.")
+
+    # Prepare date for Make_prediction:
+    elif user_input == '1':
+        pass
+    else:
+        print("Falsche Eingabe. Wählen Sie entweder 'Modell trainieren' oder 'Technik vorhersagen'.")
+        user_input = input()

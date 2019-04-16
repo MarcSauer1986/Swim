@@ -19,3 +19,4 @@ dependencies:
   - sklearn
   - graphviz==0.10.*
   - torch
+  - dask
