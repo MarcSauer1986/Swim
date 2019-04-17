@@ -5,7 +5,7 @@ from scipy.signal import find_peaks
 import subprocess
 
 # Create data frame for every single stroke and save as csv
-def single_stroke(raw_data, user_input_2, save_data=False):
+def single_stroke(raw_data, user_input, save_data=False):
 
     # Find best distance for stroke_cut
     var = []
@@ -42,7 +42,7 @@ def single_stroke(raw_data, user_input_2, save_data=False):
     if save_data == True:
         k = 1
         for i in range(0, len(list_of_dfs_without_outliers)):
-            pd.DataFrame(list_of_dfs_without_outliers[i]).to_csv('{}/stroke_{}.csv'.format(user_input_2, k), index=False)
+            pd.DataFrame(list_of_dfs_without_outliers[i]).to_csv('{}/stroke_{}.csv'.format(user_input, k), index=False)
             k += 1
         print('Einzelne Züge als CSV abgespeichert.')
 
@@ -204,14 +204,12 @@ def feature_dataframe(condition):
     })
 
     # Add condition to data frame
-    if condition == condition_0:
+    if condition == 'condition_0':
         feature_dataframe['condition'] = 0
-    elif condition == condition_1:
+    if condition == 'condition_1':
         feature_dataframe['condition'] = 1
-    elif condition == condition_2:
-        print('Daten für Vorhersage bereit!')
     else:
-        print('Daten wurden nicht gelabelt. Kein Modell-Training möglich. Nur Vorhersage!')
+        print('Daten für Vorhersage bereit!')
     return feature_dataframe
 
 if __name__ == '__main__':
@@ -225,11 +223,11 @@ if __name__ == '__main__':
         subprocess.call(['python', 'preprocess_data.py'])
 
     # Train model:
-    if user_input == '1':
+    elif user_input == '1':
         subprocess.call(['python', 'train_model.py'])
 
     # Make prediction:
-    if user_input == '2':
+    elif user_input == '2':
         subprocess.call(['python', 'make_prediction.py'])
 
     else:

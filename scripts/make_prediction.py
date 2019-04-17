@@ -25,10 +25,10 @@ clean_data = single_stroke(raw_data, user_input, save_data=True)
 # ToDo: das ist nicht so schön, aber funktioniert. Noch anpassen.
 condition_0 = 'irgendwas'
 condition_1 = 'irgendwas'
-condition_2 = str(user_input) + '/stroke_*.csv'
+no_condition = str(user_input) + '/stroke_*.csv'
 
 # Feature engineering
-clean_data = feature_dataframe(condition_2)
+clean_data = feature_dataframe(no_condition)
 pd.DataFrame(clean_data)
 
 # Prepare data

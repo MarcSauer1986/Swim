@@ -2,8 +2,7 @@ import pandas as pd
 import os
 import dask.dataframe as dd
 import subprocess
-from virtual_swim_coach import single_stroke, feature_dataframe
-
+from virtual_swim_coach import *
 
 # Prepare date
 
@@ -44,8 +43,8 @@ else:
 condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
 condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
 
-# condition_0 = str(user_input_2)+'/stroke_*.csv'
-# condition_1 = str(user_input_3)+'/stroke_*.csv'
+# condition_0 = str(user_input_1)+'/stroke_*.csv'
+# condition_1 = str(user_input_2)+'/stroke_*.csv'
 
 # Feature engineering
 feature_df_0 = feature_dataframe(condition_0)

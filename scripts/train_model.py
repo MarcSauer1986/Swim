@@ -6,7 +6,10 @@ import pickle
 # Train model
 
 # Read clean data
-clean_data = pd.read_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv')
+print("Geben Sie den Ordner an, in dem 'clean_data' abgespeichert ist: ")
+user_input_1 = input()
+
+clean_data = pd.read_csv(user_input_1)
 
 # Prepare data
 X = clean_data.drop(['condition'], axis=1)
@@ -29,17 +32,17 @@ print('Die Genauigkeit des Modells liegt bei: {:.2f}%'.format(score_logreg * 100
 
 # Save model
 print('Soll das Modell gespeichert werden?\n0: Nein\n1: Ja')
-user_input = input()
+user_input_2 = input()
 
-if user_input == '1':
+if user_input_2 == '1':
     print('Das Modell wird nun gespeichert!')
     # save the model to disk
-    filename = 'trained_model.sav'
+    filename = 'model_logreg.sav'
     pickle.dump(model_logreg, open(filename, 'wb'))
     print('Speichern des Modells abgeschlossen!')
-elif user_input == '0':
+elif user_input_2 == '0':
     print('Soll ein weiteres Modell trainiert werden?')
     # ToDo:
     pass
-if user_input == '0':
+if user_input_2 == '0':
     pass
