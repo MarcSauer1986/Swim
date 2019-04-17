@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import dask.dataframe as dd
 import pickle
-from virtual_swim_coach import single_stroke, feature_dataframe
+from virtual_swim_coach import *
 
 # Make prediction
 

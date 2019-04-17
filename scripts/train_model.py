@@ -2,11 +2,12 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 import pickle
+import subprocess
 
 # Train model
 
 # Read clean data
-print("Geben Sie den Ordner an, in dem 'clean_data' abgespeichert ist: ")
+print("Geben Sie den Dateipfad von 'clean_data' an: ")
 user_input_1 = input()
 
 clean_data = pd.read_csv(user_input_1)
@@ -35,14 +36,19 @@ print('Soll das Modell gespeichert werden?\n0: Nein\n1: Ja')
 user_input_2 = input()
 
 if user_input_2 == '1':
-    print('Das Modell wird nun gespeichert!')
-    # save the model to disk
     filename = 'model_logreg.sav'
     pickle.dump(model_logreg, open(filename, 'wb'))
     print('Speichern des Modells abgeschlossen!')
 elif user_input_2 == '0':
-    print('Soll ein weiteres Modell trainiert werden?')
+    #print('Soll ein weiteres Modell trainiert werden?')
     # ToDo:
     pass
 if user_input_2 == '0':
+    pass
+
+print("Soll eine Vorhersage gemacht werden?\n0: Nein\n1: Ja")
+user_input_3 = input()
+if user_input_3 == '1':
+    subprocess.call(['python', 'make_prediction.py'])
+if user_input_3 == '0':
     pass

@@ -204,9 +204,12 @@ def feature_dataframe(condition):
     })
 
     # Add condition to data frame
-    if condition == 'condition_0':
+    condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
+    condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
+
+    if condition == condition_0:
         feature_dataframe['condition'] = 0
-    if condition == 'condition_1':
+    if condition == condition_1:
         feature_dataframe['condition'] = 1
     else:
         print('Daten für Vorhersage bereit!')
