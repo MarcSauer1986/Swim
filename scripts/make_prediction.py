@@ -9,9 +9,9 @@ from virtual_swim_coach import *
 # Load data
 user_input = input('Gebe den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) beinhaltet: ')
 assert os.path.exists(user_input), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input)
-raw_accel = dd.read_csv(str(user_input) +'/accel-*.csv', header=None).compute()
-raw_gyro = dd.read_csv(str(user_input) +'/gyro-*.csv', header=None).compute()
-raw_magn = dd.read_csv(str(user_input) +'/magn-*.csv', header=None).compute()
+raw_accel = dd.read_csv(str(user_input) +'/accel*.csv', header=None).compute()
+raw_gyro = dd.read_csv(str(user_input) +'/gyro*.csv', header=None).compute()
+raw_magn = dd.read_csv(str(user_input) +'/magn*.csv', header=None).compute()
 print('Sehr gut, es wurden alle Sensordaten gefunden!')
 
 # Create data frame with all sensor information

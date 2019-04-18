@@ -14,16 +14,16 @@ print('Um ein Modell trainieren zu können, müssen zunächst die Daten vorberei
 # Load data
 user_input_1 = input("Gebe den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) der Bedingung 'deep catch' beinhaltet: ")
 assert os.path.exists(user_input_1), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_1)
-raw_accel_0 = dd.read_csv(str(user_input_1) +'/accel-*.csv', header=None).compute()
-raw_gyro_0 = dd.read_csv(str(user_input_1) +'/gyro-*.csv', header=None).compute()
-raw_magn_0 = dd.read_csv(str(user_input_1) +'/magn-*.csv', header=None).compute()
+raw_accel_0 = dd.read_csv(str(user_input_1) +'/accel*.csv', header=None).compute()
+raw_gyro_0 = dd.read_csv(str(user_input_1) +'/gyro*.csv', header=None).compute()
+raw_magn_0 = dd.read_csv(str(user_input_1) +'/magn*.csv', header=None).compute()
 print("Sehr gut, es wurden alle Sensordaten der Bedingung 'deep catch' gefunden!")
 
 user_input_2 = input("Gebe den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) der Bedingung 'high elbow catch' beinhaltet: ")
 assert os.path.exists(user_input_2), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_2)
-raw_accel_1 = dd.read_csv(str(user_input_2) + '/accel-*.csv', header=None).compute()
-raw_gyro_1 = dd.read_csv(str(user_input_2) + '/gyro-*.csv', header=None).compute()
-raw_magn_1 = dd.read_csv(str(user_input_2) + '/magn-*.csv', header=None).compute()
+raw_accel_1 = dd.read_csv(str(user_input_2) + '/accel*.csv', header=None).compute()
+raw_gyro_1 = dd.read_csv(str(user_input_2) + '/gyro*.csv', header=None).compute()
+raw_magn_1 = dd.read_csv(str(user_input_2) + '/magn*.csv', header=None).compute()
 print('Hooray, wir haben alle deine Sensordaten gefunden!')
 
 # Create data frame with all sensor information
@@ -47,7 +47,7 @@ elif user_input_3 == '1':
 user_input_4 = input('Soll das Modell die gesamte Datenhistorie berücksichtigen?\n0 Nein\n1 Ja\n')
 if user_input_4 == '0':
     condition_0 = str(user_input_1) + '/stroke_*.csv'
-    condition_1 = str(user_input_2)+'/stroke_*.csv'
+    condition_1 = str(user_input_2) + '/stroke_*.csv'
 elif user_input_4 == '1':
     condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
     condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
@@ -62,12 +62,6 @@ clean_data = pd.concat(frames)
 pd.DataFrame(clean_data).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv', index=False)
 print("'clean_data' als CSV abgespeichert.")
 print('Datenvorbereitung abgeschlossen!')
-
-# Read clean data
-#print("Geben Sie den Dateipfad von 'clean_data' an: ")
-#user_input_5 = input()
-
-#clean_data = pd.read_csv(user_input_5)
 
 # Prepare data
 X = clean_data.drop(['condition'], axis=1)
