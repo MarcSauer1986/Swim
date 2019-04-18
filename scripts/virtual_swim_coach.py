@@ -47,7 +47,7 @@ def single_stroke(raw_data, user_input, save_data=False):
         print('Einzelne Züge als CSV abgespeichert.')
 
 # Feature engineering
-def feature_dataframe(condition):
+def feature_engineering(condition):
     '''Creating features from single stroke and merge into new data frame'''
     Magn_X_mean = []
     Magn_X_min = []
@@ -211,28 +211,22 @@ def feature_dataframe(condition):
         feature_dataframe['condition'] = 0
     if condition == condition_1:
         feature_dataframe['condition'] = 1
-    else:
-        print('Daten für Vorhersage bereit!')
     return feature_dataframe
 
 if __name__ == '__main__':
 
-    # 3 Options: Preprocess data, Train model or Make prediction
-    print('Was wollen Sie tun?\n0: Daten vorbereiten\n1: Modell trainieren\n2: Technik vorhersagen')
+    # 2 Options: train model or make prediction
+    print("Willkommen beim 'Virtual Swim Coach'. Was willst du tun?\n0: Modell trainieren\n1: Technik vorhersagen")
     user_input = input()
 
-    # Preprocess data:
-    if user_input == '0':
-        subprocess.call(['python', 'preprocess_data.py'])
-
     # Train model:
-    elif user_input == '1':
+    if user_input == '0':
         subprocess.call(['python', 'train_model.py'])
 
     # Make prediction:
-    elif user_input == '2':
+    elif user_input == '1':
         subprocess.call(['python', 'make_prediction.py'])
 
     else:
-        print("Falsche Eingabe. Wählen Sie entweder 0 (Daten vorbereiten), 1 (Modell trainieren) oder 2 (Technik vorhersagen).")
+        print("Falsche Eingabe. Wähle entweder 0 (Modell trainieren) oder 1 (Technik vorhersagen).")
         user_input = input()

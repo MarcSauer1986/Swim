@@ -7,7 +7,7 @@ from virtual_swim_coach import *
 # Make prediction
 
 # Load data
-user_input = input('Geben Sie den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) beinhaltet: ')
+user_input = input('Gebe den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) beinhaltet: ')
 assert os.path.exists(user_input), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input)
 raw_accel = dd.read_csv(str(user_input) +'/accel-*.csv', header=None).compute()
 raw_gyro = dd.read_csv(str(user_input) +'/gyro-*.csv', header=None).compute()
@@ -28,14 +28,16 @@ condition_1 = 'irgendwas'
 no_condition = str(user_input) + '/stroke_*.csv'
 
 # Feature engineering
-clean_data = feature_dataframe(no_condition)
+clean_data = feature_engineering(no_condition)
 pd.DataFrame(clean_data)
 
 # Prepare data
 X = clean_data
 
 # Load the model from disk and make prediction
-filename = 'trained_model.sav'
-loaded_model = pickle.load(open(filename, 'rb'))
-y_pred = loaded_model.predict(X)
+filename = 'model_logreg.sav'
+model = pickle.load(open(filename, 'rb'))
+y_pred_proba = model.predict_proba(X)
+y_pred = model.predict(X)
+print(y_pred_proba)
 print(y_pred)
