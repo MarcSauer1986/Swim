@@ -20,7 +20,7 @@ raw_data = pd.concat([raw_accel, raw_gyro, raw_magn], axis=1, sort=False)
 raw_data.columns = column_names
 
 # Create data frame for every single stroke and save as csv
-clean_data = single_stroke(raw_data, user_input, save_data=True)
+single_stroke(raw_data, user_input, save_data=True)
 
 # ToDo: das ist nicht so schön, aber funktioniert. Noch anpassen.
 condition_0 = 'irgendwas'

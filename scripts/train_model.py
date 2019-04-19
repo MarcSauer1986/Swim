@@ -46,9 +46,9 @@ elif user_input_3 == '1':
 # Define which data is relevant for training
 user_input_4 = input('Soll das Modell die gesamte Datenhistorie berücksichtigen?\n0 Nein\n1 Ja\n')
 if user_input_4 == '0':
-    condition_0 = str(user_input_1) + '/stroke_*.csv'
-    condition_1 = str(user_input_2) + '/stroke_*.csv'
-elif user_input_4 == '1':
+    condition_0 = user_input_1 + '/stroke_*.csv'
+    condition_1 = user_input_2 + '/stroke_*.csv'
+if user_input_4 == '1':
     condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
     condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
 
@@ -59,7 +59,7 @@ frames = [feature_df_0, feature_df_1]
 clean_data = pd.concat(frames)
 
 # Save clean_data to CSV
-pd.DataFrame(clean_data).to_csv('/Users/marcsauer/PycharmProjects/Swim/data/clean_data.csv', index=False)
+pd.DataFrame(clean_data).to_csv('/users/marcsauer/PycharmProjects/Swim/data/clean_data.csv', index=False)
 print("'clean_data' als CSV abgespeichert.")
 print('Datenvorbereitung abgeschlossen!')
 
