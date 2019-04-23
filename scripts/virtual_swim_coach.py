@@ -3,9 +3,11 @@ import numpy as np
 import glob
 from scipy.signal import find_peaks
 import subprocess
+import sys
+import os
 
 # Create data frame for every single stroke and save as csv
-def single_stroke(raw_data, user_input, save_data=False):
+def single_stroke(raw_data, user_input, save_data=False, print_status=True):
 
     # Find best distance for stroke_cut
     var = []
@@ -44,7 +46,8 @@ def single_stroke(raw_data, user_input, save_data=False):
         for i in range(0, len(list_of_dfs_without_outliers)):
             pd.DataFrame(list_of_dfs_without_outliers[i]).to_csv('{}/stroke_{}.csv'.format(user_input, k), index=False)
             k += 1
-        print('Einzelne Züge als CSV abgespeichert.')
+        if print_status == True:
+            print('Einzelne Züge als CSV abgespeichert.')
 
 # Feature engineering
 def feature_engineering(condition):
@@ -208,8 +211,7 @@ def feature_engineering(condition):
 if __name__ == '__main__':
 
     # 2 Options: train model or make prediction
-    print("Willkommen beim 'Virtual Swim Coach'. Was willst du tun?\n0: Modell trainieren\n1: Technik vorhersagen")
-    user_input = input()
+    user_input = input("Willkommen beim 'Virtual Swim Coach'. Was willst du tun?\n0: Modell trainieren\n1: Technik vorhersagen")
 
     # Train model:
     if user_input == '0':
@@ -221,4 +223,4 @@ if __name__ == '__main__':
 
     else:
         print("Falsche Eingabe. Wähle entweder 0 (Modell trainieren) oder 1 (Technik vorhersagen).")
-        user_input = input()
+        os.execl(sys.executable, sys.executable, *sys.argv)

@@ -6,6 +6,7 @@ import subprocess
 import dask.dataframe as dd
 from virtual_swim_coach import *
 import os
+import sys
 
 # Train model
 
@@ -37,18 +38,17 @@ raw_data_1.columns = column_names
 # Create data frame for every single stroke and save as csv
 user_input_3 = input('Sollen die Schwimmzüge einzeln abgespeichert werden?\n0 Nein\n1 Ja\n')
 if user_input_3 == '0':
-    single_stroke(raw_data_0, user_input_1, save_data=False)
-    single_stroke(raw_data_1, user_input_2, save_data=False)
+    single_stroke(raw_data_0, user_input_1, save_data=False, print_status=True)
+    single_stroke(raw_data_1, user_input_2, save_data=False, print_status=True)
 elif user_input_3 == '1':
-    single_stroke(raw_data_0, user_input_1, save_data=True)
-    single_stroke(raw_data_1, user_input_2, save_data=True)
+    single_stroke(raw_data_0, user_input_1, save_data=True, print_status=True)
+    single_stroke(raw_data_1, user_input_2, save_data=True, print_status=True)
 
 # Define which data is relevant for training
 user_input_4 = input('Soll das Modell die gesamte Datenhistorie berücksichtigen?\n0 Nein\n1 Ja\n')
 if user_input_4 == '0':
     condition_0 = user_input_1 + '/stroke_*.csv'
     condition_1 = user_input_2 + '/stroke_*.csv'
-
 if user_input_4 == '1':
     condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
     condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
@@ -88,23 +88,21 @@ score_logreg = model_logreg.score(X_val, y_val)
 print('Die Genauigkeit des Modells liegt bei: {:.2f}%'.format(score_logreg * 100))
 
 # Save model
-print('Soll das Modell gespeichert werden?\n0: Nein\n1: Ja')
-user_input_5 = input()
-
-if user_input_5 == '1':
+user_input_5 = input('Soll das Modell gespeichert werden?\n0: Nein\n1: Ja')
+if user_input_5 == '0':
+    user_input_6 = input('Soll ein weiteres Modell trainiert werden?\n0: Nein\n1: Ja')
+    if user_input_6 == '0':
+        subprocess.call(['python', 'virtual_swim_coach.py'])
+    elif user_input_6 == '1':
+        os.execl(sys.executable, sys.executable, *sys.argv)
+elif user_input_5 == '1':
     filename = 'model_logreg.sav'
     pickle.dump(model_logreg, open(filename, 'wb'))
     print('Speichern des Modells abgeschlossen!')
-elif user_input_5 == '0':
-    #print('Soll ein weiteres Modell trainiert werden?')
-    # ToDo:
-    pass
-if user_input_5 == '0':
-    pass
 
-print("Soll eine Vorhersage gemacht werden?\n0: Nein\n1: Ja")
-user_input_6 = input()
-if user_input_6 == '1':
+# Make prediction
+user_input_7 = input("Soll eine Vorhersage gemacht werden?\n0: Nein\n1: Ja")
+if user_input_7 == '0':
+    subprocess.call(['python', 'virtual_swim_coach.py'])
+elif user_input_7 == '1':
     subprocess.call(['python', 'make_prediction.py'])
-if user_input_6 == '0':
-    pass
