@@ -203,14 +203,6 @@ def feature_engineering(condition):
         'Accel_Z_mean': Accel_Z_mean, 'Accel_Z_min': Accel_Z_min, 'Accel_Z_max': Accel_Z_max,
     })
 
-    # Add condition to data frame
-    condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
-    condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
-
-    if condition == condition_0:
-        feature_dataframe['condition'] = 0
-    if condition == condition_1:
-        feature_dataframe['condition'] = 1
     return feature_dataframe
 
 if __name__ == '__main__':

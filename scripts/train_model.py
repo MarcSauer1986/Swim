@@ -48,13 +48,18 @@ user_input_4 = input('Soll das Modell die gesamte Datenhistorie berücksichtigen
 if user_input_4 == '0':
     condition_0 = user_input_1 + '/stroke_*.csv'
     condition_1 = user_input_2 + '/stroke_*.csv'
+
 if user_input_4 == '1':
     condition_0 = '/users/marcsauer/PycharmProjects/Swim/data/Run_0_*/stroke_*.csv'
     condition_1 = '/users/marcsauer/PycharmProjects/Swim/data/Run_1_*/stroke_*.csv'
 
 # Feature engineering
 feature_df_0 = feature_engineering(condition_0)
+feature_df_0['condition'] = 0
+
 feature_df_1 = feature_engineering(condition_1)
+feature_df_1['condition'] = 1
+
 frames = [feature_df_0, feature_df_1]
 clean_data = pd.concat(frames)
 
