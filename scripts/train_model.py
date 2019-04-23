@@ -11,16 +11,15 @@ import sys
 # Train model
 
 # Prepare date
-print('Um ein Modell trainieren zu können, müssen zunächst die Daten vorbereitet werden.')
 # Load data
-user_input_1 = input("Gebe den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) der Bedingung 'deep catch' beinhaltet: ")
+user_input_1 = input("Gebe den Ordnerpfad an, der die Sensordaten (accel, gyro, magn) der Bedingung 'deep catch' beinhaltet: ")
 assert os.path.exists(user_input_1), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_1)
 raw_accel_0 = dd.read_csv(str(user_input_1) +'/accel*.csv', header=None).compute()
 raw_gyro_0 = dd.read_csv(str(user_input_1) +'/gyro*.csv', header=None).compute()
 raw_magn_0 = dd.read_csv(str(user_input_1) +'/magn*.csv', header=None).compute()
 print("Sehr gut, es wurden alle Sensordaten der Bedingung 'deep catch' gefunden!")
 
-user_input_2 = input("Gebe den Ordnerpfad an, der alle Sensordaten (accel, gyro, magn) der Bedingung 'high elbow catch' beinhaltet: ")
+user_input_2 = input("Gebe den Ordnerpfad an, der die Sensordaten (accel, gyro, magn) der Bedingung 'high elbow catch' beinhaltet: ")
 assert os.path.exists(user_input_2), "Ich konnte die Daten in folgendem Pfad nicht finden: " + str(user_input_2)
 raw_accel_1 = dd.read_csv(str(user_input_2) + '/accel*.csv', header=None).compute()
 raw_gyro_1 = dd.read_csv(str(user_input_2) + '/gyro*.csv', header=None).compute()
