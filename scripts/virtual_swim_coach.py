@@ -211,7 +211,7 @@ def feature_engineering(condition):
 if __name__ == '__main__':
 
     # 2 Options: train model or make prediction
-    user_input = input("Willkommen beim 'Virtual Swim Coach'. Was willst du tun?\n0: Modell trainieren\n1: Technik vorhersagen")
+    user_input = input("Willkommen beim 'Virtual Swim Coach'. Was willst du tun?\n0: Modell trainieren\n1: Technik vorhersagen\n2: Programm beenden")
 
     # Train model:
     if user_input == '0':
@@ -221,6 +221,10 @@ if __name__ == '__main__':
     elif user_input == '1':
         subprocess.call(['python', 'make_prediction.py'])
 
+    # Quit program:
+    elif user_input == '2':
+        sys.exit()
+
     else:
-        print("Falsche Eingabe. Wähle entweder 0 (Modell trainieren) oder 1 (Technik vorhersagen).")
+        print("Falsche Eingabe. Wähle entweder 0 (Modell trainieren), 1 (Technik vorhersagen) oder 2 (Programm beenden).")
         os.execl(sys.executable, sys.executable, *sys.argv)

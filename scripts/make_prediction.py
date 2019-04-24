@@ -22,12 +22,12 @@ raw_data = pd.concat([raw_accel, raw_gyro, raw_magn], axis=1, sort=False)
 raw_data.columns = column_names
 
 # Create data frame for every single stroke and save as csv
-single_stroke(raw_data, user_input, save_data=True, print_status=False)
+single_stroke(raw_data, user_input_1, save_data=True, print_status=False)
 
 # ToDo: das ist nicht so schön, aber funktioniert. Noch anpassen.
 condition_0 = 'irgendwas'
 condition_1 = 'irgendwas'
-no_condition = str(user_input) + '/stroke_*.csv'
+no_condition = str(user_input_1) + '/stroke_*.csv'
 
 # Feature engineering
 clean_data = feature_engineering(no_condition)
