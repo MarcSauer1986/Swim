@@ -20,3 +20,5 @@ dependencies:
   - graphviz==0.10.*
   - torch
   - dask
+  - ffmpeg
+  - streamz
