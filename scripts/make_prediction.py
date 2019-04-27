@@ -38,6 +38,7 @@ X = clean_data
 
 # Load the model from disk and make prediction
 filename = 'model_logreg.sav'
+# filename = 'model_lda.sav'
 model = pickle.load(open(filename, 'rb'))
 y_pred_proba = model.predict_proba(X)
 y_pred = model.predict(X)

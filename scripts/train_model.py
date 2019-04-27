@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import pickle
 import subprocess
 import dask.dataframe as dd
@@ -80,10 +81,13 @@ X_val = pd.DataFrame(X_val)
 # Run training
 logreg = LogisticRegression(solver='liblinear', multi_class='ovr')
 model_logreg = logreg.fit(X_train, y_train)
+# lda = LinearDiscriminantAnalysis()
+# model_lda = lda.fit(X_train, y_train)
 print('Training abgeschlossen!')
 
 # Evaluate training
 score_logreg = model_logreg.score(X_val, y_val)
+# score_lda = model_lda.score(X_val, y_val)
 print('Die Genauigkeit des Modells liegt bei: {:.2f}%'.format(score_logreg * 100))
 
 # Save model
@@ -96,6 +100,7 @@ if user_input_5 == '0':
         os.execl(sys.executable, sys.executable, *sys.argv)
 elif user_input_5 == '1':
     filename = 'model_logreg.sav'
+    # filename = 'model_lda.sav'
     pickle.dump(model_logreg, open(filename, 'wb'))
     print('Speichern des Modells abgeschlossen!')
 
