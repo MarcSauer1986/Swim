@@ -5,6 +5,7 @@ import pickle
 from virtual_swim_coach import *
 import sys
 import subprocess
+import numpy as np
 
 # Make prediction
 
@@ -34,15 +35,14 @@ clean_data = feature_engineering(no_condition)
 pd.DataFrame(clean_data)
 
 # Prepare data
-X = clean_data
+X = np.array(clean_data['Accel_X_mean']).reshape(-1, 1)
+# X = clean_data
 
 # Load the model from disk and make prediction
-filename = 'model_logreg.sav'
-# filename = 'model_lda.sav'
+# filename = 'model_logreg.sav'
+filename = 'model_lda.sav'
 model = pickle.load(open(filename, 'rb'))
-y_pred_proba = model.predict_proba(X)
 y_pred = model.predict(X)
-print(y_pred_proba)
 print(y_pred)
 
 # Another prediction
